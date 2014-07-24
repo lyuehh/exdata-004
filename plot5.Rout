@@ -1,0 +1,40 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.1.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> NEI <- readRDS("summarySCC_PM25.rds")
+> SCC <- readRDS("Source_Classification_Code.rds")
+> 
+> # How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
+> 
+> NEIBalCity <- NEI[NEI$fips=="24510", ]
+> SCCMotor <- SCC[grepl("On-Road", SCC$EI.Sector, ignore.case=FALSE),]
+> NEIMotorBalCity <- subset(NEIBalCity, SCC %in% SCCMotor$SCC)
+> NEIMotorBalCityTotal <- aggregate(NEIMotorBalCity$Emissions ~ NEIMotorBalCity$year,FUN=sum)
+> colnames(NEIMotorBalCityTotal) <- c("Year","TotalEmissions")
+> png(filename="plot5.png", units="px")
+> plot(NEIMotorBalCityTotal$Year, NEIMotorBalCityTotal$TotalEmissions, type="l", xlab="Year", ylab="Total Emissions in tons", main="PM2.5 from motor vehicle sources in Baltimore City")
+> dev.off()
+null device 
+          1 
+> 
+> proc.time()
+   user  system elapsed 
+ 64.856   0.704  66.148 
